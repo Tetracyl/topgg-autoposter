@@ -17,27 +17,32 @@ import { PosterOptions } from './typings'
  * 
  * AutoPoster('topggtoken', client) // that's it!
  */
-export function AutoPoster (token: string, client: any, options?: PosterOptions): BasePoster {
+export function AutoPoster(token: string, client: any, options?: PosterOptions): BasePoster {
   if (!token) throw new Error('Top.gg token is missing')
   if (!client) throw new Error('Client is missing')
   let DiscordJS
   try {
     DiscordJS = require.cache[require.resolve('discord.js')]
-  } catch (err) {}
-    
+  } catch (err) { }
+
+  let Kurasuta
+  try {
+    Kurasuta = require.cache[require.resolve('kurasuta')]
+  } catch (err) { }
+
   let Eris
   try {
     Eris = require.cache[require.resolve('eris')]
-  } catch (err) {}
+  } catch (err) { }
 
   let DR
   try {
     DR = require.cache[require.resolve('discord-rose')]
-  } catch (err) {}
+  } catch (err) { }
 
   if (DiscordJS && client instanceof DiscordJS.exports.Client) return new DJSPoster(token, client, options)
   if (Eris && client instanceof Eris.exports.Client) return new ErisPoster(token, client, options)
-  if (DiscordJS && client instanceof DiscordJS.exports.ShardingManager) return new DJSSharderPoster(token, client, options)
+  if (DiscordJS && (client instanceof DiscordJS.exports.ShardingManager || client instanceof Kurasuta.exports.ShardingManager)) return new DJSSharderPoster(token, client, options)
   if (DR && client instanceof DR.exports.Master) return new RosePoster(token, client, options)
 
   throw new Error('Unsupported client')

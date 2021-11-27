@@ -4,6 +4,8 @@ import { BotStats } from '@top-gg/sdk/dist/typings'
 
 import { ShardingManager } from 'discord.js'
 
+import kurasuta from 'kurasuta'
+
 import { PosterOptions } from '../typings'
 
 /**
@@ -18,13 +20,13 @@ export class DJSSharderPoster extends BasePoster implements BasePosterInterface 
    * @param client Your Discord.JS ShardingManager
    * @param options Options
    */
-  constructor (token: string, client: any, options?: PosterOptions) {
+  constructor(token: string, client: any, options?: PosterOptions) {
     if (!token) throw new Error('Missing Top.gg Token')
     if (!client) throw new Error('Missing client')
 
     const Discord = require('discord.js')
 
-    if (!(client instanceof Discord.ShardingManager)) throw new Error('Not a discord.js ShardingManager.')
+    if (!(client instanceof Discord.ShardingManager) && !(client instanceof kurasuta.ShardingManager)) throw new Error('Not a discord.js ShardingManager.')
 
     super(token, options)
 
@@ -37,7 +39,7 @@ export class DJSSharderPoster extends BasePoster implements BasePosterInterface 
     })
   }
 
-  public clientReady (): boolean {
+  public clientReady(): boolean {
     return this.client.shards.size > 0 && this.client.shards.every(x => x.ready)
   }
 
@@ -53,7 +55,7 @@ export class DJSSharderPoster extends BasePoster implements BasePosterInterface 
     this.client.on('shardCreate', listener)
   }
 
-  public async getStats (): Promise<BotStats> {
+  public async getStats(): Promise<BotStats> {
     const response = await this.client.fetchClientValues('guilds.cache.size')
     return {
       serverCount: response.reduce((a, b) => a + b, 0),

@@ -26,6 +26,7 @@
   "dependencies": {
     "@jpbberry/typed-emitter": "^1.0.1",
     "@top-gg/sdk": "^3.0.9",
+    "kurasuta": "^3.0.1",
     "typescript": "^4.2.3"
   },
   "types": "./dist/index.d.ts"
